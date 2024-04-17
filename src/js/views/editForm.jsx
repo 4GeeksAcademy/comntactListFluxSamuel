@@ -1,25 +1,40 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams} from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-import "../../styles/demo.css";
+import "../../styles/editForm.css";
 
-export const Demo = () => {
+export const EditForm = () => {
 	const { store, actions } = useContext(Context);
-	const[name, setName]= useState("");
-	const[emailAddress, setEmailAddress]= useState("");
-	const[phoneNumber, setPhoneNumber]= useState("")
-	const[streetAddress, setStreetAddress]= useState("")
+
+	const[name, setname]= useState("Nombre");
+	const[emailAddress, setEmailAddress]= useState("Email");
+	const[phoneNumber, setPhoneNumber]= useState("Telefono");
+	const[streetAddress, setStreetAddress]= useState("Direccion");
+	const {id} = useParams(); 
+	console.log(id);
+
+
+ 	useEffect(()=>{
+		actions.getSingleContact(id)
+	},[])  
+	useEffect (()=>{
+		setname(store.contacto.name)
+		setEmailAddress(store.contacto.email)
+		setPhoneNumber(store.contacto.phone)
+		setStreetAddress(store.contacto.address)
+	},[store.contacto])
+
 
 	const handleSubmit = e =>{
 		e.preventDefault();
-		
-		actions.createContact(name, emailAddress, phoneNumber, streetAddress );
-		setName("");
+		actions.editContact(name, emailAddress, phoneNumber, streetAddress, id);
+		setname("");
 		setEmailAddress("");
 		setStreetAddress("");
 		setPhoneNumber("");
+
 	}
 	return (
 		<div className="container">
@@ -30,7 +45,7 @@ export const Demo = () => {
 					type="text" 
 					className="form-control"
 					value={name}
-					onChange={e =>setName(e.target.value)}
+					onChange={e =>setname(e.target.value)}
 					placeholder="Samu Marrero"
 					
 					/>
@@ -65,14 +80,14 @@ export const Demo = () => {
 					placeholder="Address"
 					/>
 				</div>
-  
- 				 <button type="submit" className="btns">Submit</button>
-				  <Link to="/">
-				<button onClick={()=> console.log(name)} className="btns mx-3 mb-3">Back home</button>
-			</Link>
+				<div className="mb-3">
+ 				 	<button type="submit" className="btns">Submit</button>
+					<Link to="/">
+						<button className="btns mx-3" >Back home</button>
+					</Link>
+				</div>
 			</form>
 
-			
 			
 		</div>
 	);
